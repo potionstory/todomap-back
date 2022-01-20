@@ -3,8 +3,7 @@
   "scripts": {
     "lint": "eslint --ext .js,.ts .",
     "build": "tsc",
-    "build:live": "nodemon --watch 'src/**/*.ts' --exec \"ts-node\" src/index.ts",
-    "serve": "npm run build:live && firebase emulators:start --only functions",
+    "serve": "tsc -w | firebase emulators:start --only functions",
     "shell": "npm run build && firebase functions:shell",
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions",
@@ -32,7 +31,6 @@
     "eslint-config-google": "^0.14.0",
     "eslint-plugin-import": "^2.22.0",
     "firebase-functions-test": "^0.2.0",
-    "nodemon": "^2.0.15",
     "typescript": "^3.8.0"
   },
   "private": true
