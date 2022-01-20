@@ -148,4 +148,11 @@ lib/**/*.js.map
 # TypeScript v1 declaration files
 typings/
 
+# Firebase 
+src/service/config.ts
+src/serviceAccountKey.json
+
+# Firebase deploy
+lib
+
 # End of https://www.toptal.com/developers/gitignore/api/node
