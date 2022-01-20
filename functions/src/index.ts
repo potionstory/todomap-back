@@ -1,12 +1,12 @@
 import * as functions from "firebase-functions";
 import Koa from "koa";
 import Router from "koa-router";
-import routes from "./routes";
+import route from "./route";
 
 const app = new Koa();
 const router = new Router();
 
-router.use(routes.routes());
+router.use(route.routes());
 
 app.use(router.routes()).use(router.allowedMethods());
 

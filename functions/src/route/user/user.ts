@@ -1,13 +1,9 @@
 import { Context } from "koa";
 import Router from "koa-router";
-import { db } from "../service/admin";
+import { db } from "../../service/admin";
+import { User } from "./type";
 
 const router = new Router();
-
-interface User {
-  name: string;
-  age: number;
-}
 
 export const getUsers = router.get("/", async (ctx: Context) => {
   if (ctx.method !== "GET") ctx.status = 400;
