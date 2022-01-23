@@ -1,9 +1,9 @@
 import Router from "koa-router";
-import { getUsers, signUp } from "./user";
+import user from "./user";
 
 const route = new Router();
 
-route.use("/user", getUsers.routes());
-route.use("/signup", signUp.routes());
+// route > user
+route.use("/user", user.routes());
 
 export default route;

@@ -1,3 +1,10 @@
-import { getUsers, signUp } from "./user";
+import Router from "koa-router";
+import { getUsers, signIn, signUp } from "./user";
 
-export { getUsers, signUp };
+const route = new Router();
+
+route.get("/", getUsers);
+route.post("/signIn", signIn);
+route.post("/signUp", signUp);
+
+export default route;
