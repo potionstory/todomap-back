@@ -1,13 +1,13 @@
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
 import { DefaultContext } from "koa";
-import Router from "koa-router";
 import { auth, db } from "../../service";
-import { User } from "./type";
-
-const router = new Router();
+import { UserSignIn, UserSignUp } from "./type";
 
 // !: Deprecated API > delete
-export const getUsers = router.get("/", async (ctx: DefaultContext) => {
+export const getUsers = async (ctx: DefaultContext): Promise<void> => {
   if (ctx.method !== "GET") ctx.status = 400;
 
   try {
@@ -15,7 +15,7 @@ export const getUsers = router.get("/", async (ctx: DefaultContext) => {
       .collection("users")
       .get()
       .then((data) => {
-        const users: User[] = [];
+        const users: UserSignUp[] = [];
 
         data.forEach((doc) => {
           users.push({
@@ -31,15 +31,14 @@ export const getUsers = router.get("/", async (ctx: DefaultContext) => {
   } catch (err) {
     ctx.body = err;
   }
-});
+};
 
 // TODO: [POST] signUp
-export const signUp = router.post("/", async (ctx: DefaultContext) => {
+export const signUp = async (ctx: DefaultContext): Promise<void> => {
   if (ctx.method !== "POST") ctx.status = 400;
 
-  const { email, password, name }: User = ctx.req.body;
-
   try {
+    const { email, password, name }: UserSignUp = ctx.req.body;
     const userDoc = await db
       .collection("users")
       .where("email", "==", email)
@@ -66,4 +65,20 @@ export const signUp = router.post("/", async (ctx: DefaultContext) => {
   } catch (err) {
     ctx.body = err;
   }
-});
+};
+
+// TODO: [POST] signIn
+export const signIn = async (ctx: DefaultContext): Promise<void> => {
+  if (ctx.method !== "POST") ctx.status = 400;
+
+  try {
+    const { email, password }: UserSignIn = ctx.req.body;
+    const data = await signInWithEmailAndPassword(auth, email, password);
+    const token = await data.user.getIdToken();
+
+    ctx.status = 200;
+    ctx.body = { token };
+  } catch (err) {
+    ctx.body = err;
+  }
+};
