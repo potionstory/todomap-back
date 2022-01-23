@@ -48,23 +48,20 @@ export const signUp = router.post("/", async (ctx: DefaultContext) => {
     if (!userDoc.empty) {
       ctx.status = 409;
     } else {
-      await createUserWithEmailAndPassword(auth, email, password).then(
-        async (data) => {
-          const token = await data.user.getIdToken();
-          const user = {
-            email,
-            name,
-          };
+      const user = {
+        email,
+        name,
+      };
+      const data = await createUserWithEmailAndPassword(auth, email, password);
+      const token = await data.user.getIdToken();
 
-          await db
-            .collection("users")
-            .add(user)
-            .then(() => {
-              ctx.status = 200;
-              ctx.body = { token };
-            });
-        }
-      );
+      await db
+        .collection("users")
+        .add(user)
+        .then(() => {
+          ctx.status = 200;
+          ctx.body = { token };
+        });
     }
   } catch (err) {
     ctx.body = err;
