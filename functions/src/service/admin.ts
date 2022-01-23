@@ -1,9 +1,9 @@
-import * as admin from "firebase-admin";
+import { credential, initializeApp } from "firebase-admin";
 import serviceAccount from "../serviceAccountKey.json";
 import config from "./config";
 
-admin.initializeApp({
-  credential: admin.credential.cert({
+const admin = initializeApp({
+  credential: credential.cert({
     privateKey: serviceAccount.private_key,
     clientEmail: serviceAccount.client_email,
     projectId: serviceAccount.project_id,
@@ -12,4 +12,4 @@ admin.initializeApp({
   storageBucket: config.storageBucket,
 });
 
-export const db = admin.firestore();
+export default admin;
