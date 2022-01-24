@@ -4,7 +4,7 @@ import {
 } from "firebase/auth";
 import { DefaultContext } from "koa";
 import { auth, db } from "../../service";
-import { UserSignIn, UserSignUp } from "./type";
+import { User, UserSignIn, UserSignUp } from "./type";
 
 // !: Deprecated API > delete
 export const getUsers = async (ctx: DefaultContext): Promise<void> => {
@@ -78,6 +78,37 @@ export const signIn = async (ctx: DefaultContext): Promise<void> => {
 
     ctx.status = 200;
     ctx.body = { token };
+  } catch (err) {
+    ctx.body = err;
+  }
+};
+
+// TODO: [POST] 사용자 정보 가져오기
+export const getUser = async (ctx: DefaultContext): Promise<void> => {
+  if (ctx.method !== "GET") ctx.status = 400;
+
+  try {
+    const { id } = ctx.params;
+
+    await db
+      .doc(`/users/${id}`)
+      .get()
+      .then((doc) => {
+        const data = doc.data();
+
+        if (!data) {
+          ctx.status = 409;
+        } else {
+          const { email, name } = data;
+          const user: User = {
+            email,
+            name,
+          };
+
+          ctx.status = 200;
+          ctx.body = user;
+        }
+      });
   } catch (err) {
     ctx.body = err;
   }
