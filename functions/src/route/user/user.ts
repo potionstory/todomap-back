@@ -11,7 +11,7 @@ export const signUp = async (ctx: DefaultContext): Promise<void> => {
   if (ctx.method !== "POST") ctx.status = 400;
 
   try {
-    const { email, password, name }: UserSignUp = ctx.req.body;
+    const { email, name, password }: UserSignUp = ctx.req.body;
     const userDoc = await db
       .collection("users")
       .where("email", "==", email)
