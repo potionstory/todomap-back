@@ -6,33 +6,6 @@ import { DefaultContext } from "koa";
 import { auth, db } from "../../service";
 import { User, UserSignIn, UserSignUp } from "./type";
 
-// !: Deprecated API > delete
-export const getUsers = async (ctx: DefaultContext): Promise<void> => {
-  if (ctx.method !== "GET") ctx.status = 400;
-
-  try {
-    await db
-      .collection("users")
-      .get()
-      .then((data) => {
-        const users: UserSignUp[] = [];
-
-        data.forEach((doc) => {
-          users.push({
-            email: doc.data().email,
-            name: doc.data().name,
-            password: doc.data().password,
-          });
-        });
-
-        ctx.status = 200;
-        ctx.body = users;
-      });
-  } catch (err) {
-    ctx.body = err;
-  }
-};
-
 // TODO: [POST] signUp
 export const signUp = async (ctx: DefaultContext): Promise<void> => {
   if (ctx.method !== "POST") ctx.status = 400;
@@ -47,16 +20,18 @@ export const signUp = async (ctx: DefaultContext): Promise<void> => {
     if (!userDoc.empty) {
       ctx.status = 409;
     } else {
+      const data = await createUserWithEmailAndPassword(auth, email, password);
+      const token = await data.user.getIdToken();
+      const { uid } = data.user;
       const user = {
         email,
         name,
       };
-      const data = await createUserWithEmailAndPassword(auth, email, password);
-      const token = await data.user.getIdToken();
 
       await db
         .collection("users")
-        .add(user)
+        .doc(uid)
+        .set(user)
         .then(() => {
           ctx.status = 200;
           ctx.body = { token };
